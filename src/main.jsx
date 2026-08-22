@@ -1,14 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { createRoot } from "react-dom/client";
-import {
-  ArrowDown,
-  ArrowUpRight,
-  MapPin,
-  Mail,
-  Moon,
-  Sun,
-} from "lucide-react";
-
+import { ArrowDown, ArrowUpRight, MapPin, Mail } from "lucide-react";
 import "./styles.css";
 
 import privateChatShot from "./assets/privatechat.png";
@@ -37,7 +29,7 @@ const PROJECTS = [
       "JWT",
     ],
     github: "https://github.com/ameyvs31",
-    live: "https://privatechat-frontend.onrender.com",
+    live: "https://chat-app-ashen-six.vercel.app/",
     imagePosition: "center",
   },
   {
@@ -70,7 +62,6 @@ const MINI_PROJECTS = [
     title: "ClimaView",
     type: "Weather dashboard",
     year: "2026",
-    role: "Frontend development",
     image: climaViewShot,
     description:
       "Real-time weather dashboard with city search, geolocation, current conditions, hourly trends and multi-day forecasts.",
@@ -83,7 +74,6 @@ const MINI_PROJECTS = [
     title: "PulseNews",
     type: "News intelligence platform",
     year: "2026",
-    role: "Frontend development",
     image: pulseNewsShot,
     description:
       "Editorial-style news platform with category browsing, search, live headlines, responsive cards and a polished reading experience.",
@@ -98,11 +88,13 @@ function Reveal({ children, className = "" }) {
 }
 
 function ProjectCard({ project }) {
+  const disabled = !project.live;
+
   return (
     <article className="project-card">
       <a
         className="project-shot"
-        href={project.live}
+        href={disabled ? undefined : project.live}
         target="_blank"
         rel="noreferrer"
         aria-label={`Open ${project.title} live demo`}
@@ -110,9 +102,7 @@ function ProjectCard({ project }) {
         <img
           src={project.image}
           alt={`${project.title} live project screenshot`}
-          style={{
-            objectPosition: project.imagePosition || "center",
-          }}
+          style={{ objectPosition: project.imagePosition }}
         />
 
         <div className="shot-overlay" />
@@ -164,14 +154,20 @@ function ProjectCard({ project }) {
               GitHub <ArrowUpRight size={13} />
             </a>
 
-            <a
-              href={project.live}
-              target="_blank"
-              rel="noreferrer"
-              className="live-link"
-            >
-              Live Demo <ArrowUpRight size={13} />
-            </a>
+            {!disabled ? (
+              <a
+                href={project.live}
+                target="_blank"
+                rel="noreferrer"
+                className="live-link"
+              >
+                Live Demo <ArrowUpRight size={13} />
+              </a>
+            ) : (
+              <span className="pending-link">
+                Live URL <span>add link</span>
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -180,11 +176,13 @@ function ProjectCard({ project }) {
 }
 
 function MiniProject({ project }) {
+  const disabled = !project.live;
+
   return (
     <article className="mini-card">
       <a
         className="mini-shot"
-        href={project.live}
+        href={disabled ? undefined : project.live}
         target="_blank"
         rel="noreferrer"
         aria-label={`Open ${project.title} live demo`}
@@ -201,7 +199,8 @@ function MiniProject({ project }) {
         </span>
 
         <span className="mini-view">
-          View live <ArrowUpRight size={15} />
+          {disabled ? "Live URL needed" : "View live"}
+          <ArrowUpRight size={15} />
         </span>
       </a>
 
@@ -230,13 +229,15 @@ function MiniProject({ project }) {
             GitHub ↗
           </a>
 
-          <a
-            href={project.live}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Live Demo ↗
-          </a>
+          {!disabled && (
+            <a
+              href={project.live}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Live Demo ↗
+            </a>
+          )}
         </div>
       </div>
     </article>
@@ -244,23 +245,7 @@ function MiniProject({ project }) {
 }
 
 function App() {
-  const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem("portfolio-theme") === "dark";
-  });
-
-  useEffect(() => {
-    document.documentElement.classList.toggle(
-      "dark",
-      darkMode
-    );
-
-    localStorage.setItem(
-      "portfolio-theme",
-      darkMode ? "dark" : "light"
-    );
-  }, [darkMode]);
-
-  useEffect(() => {
+  React.useEffect(() => {
     const items = document.querySelectorAll(".reveal");
 
     const observer = new IntersectionObserver(
@@ -287,10 +272,7 @@ function App() {
       <header className="site-header">
         <div className="container nav">
           <a href="#top" className="brand">
-            <span className="brand-mark">
-              AS
-            </span>
-
+            <span className="brand-mark">AS</span>
             <span>Amey Shrivastav</span>
           </a>
 
@@ -298,38 +280,16 @@ function App() {
             <a href="#work">Work</a>
             <a href="#experience">Experience</a>
             <a href="#about">About</a>
+
             <a href="#contact" className="nav-cta">
               Contact
             </a>
-
-            <button
-              type="button"
-              className="theme-toggle"
-              onClick={() => setDarkMode((value) => !value)}
-              aria-label={
-                darkMode
-                  ? "Switch to light mode"
-                  : "Switch to dark mode"
-              }
-              title={
-                darkMode
-                  ? "Switch to light mode"
-                  : "Switch to dark mode"
-              }
-            >
-              {darkMode ? (
-                <Sun size={17} />
-              ) : (
-                <Moon size={17} />
-              )}
-            </button>
           </nav>
         </div>
       </header>
 
       <main id="top">
         {/* HERO */}
-
         <section className="hero">
           <div className="container hero-grid">
             <Reveal>
@@ -344,10 +304,10 @@ function App() {
               </h1>
 
               <p className="hero-description">
-                I'm Amey Vikram Shrivastav, a Computer
-                Science graduate focused on full-stack web
-                development, frontend engineering, backend
-                systems and real-time applications.
+                I'm Amey Vikram Shrivastav, a Computer Science
+                graduate focused on full-stack web development,
+                frontend engineering, backend systems and
+                real-time applications.
               </p>
 
               <div className="hero-actions">
@@ -393,8 +353,7 @@ function App() {
           </div>
         </section>
 
-        {/* SELECTED WORK */}
-
+        {/* PROJECTS */}
         <section className="section" id="work">
           <div className="container">
             <Reveal className="section-header">
@@ -409,9 +368,10 @@ function App() {
                 </h2>
 
                 <p className="section-subtitle">
-                  Applications covering frontend engineering,
-                  APIs, authentication, databases, real-time
-                  communication and live data integrations.
+                  Four applications covering frontend
+                  engineering, APIs, authentication, databases,
+                  real-time communication and live data
+                  integrations.
                 </p>
               </div>
             </Reveal>
@@ -426,8 +386,7 @@ function App() {
           </div>
         </section>
 
-        {/* CLIMAVIEW + PULSENEWS */}
-
+        {/* MINI PROJECTS */}
         <section className="section split-project-section">
           <div className="container">
             <Reveal className="section-header">
@@ -437,8 +396,8 @@ function App() {
 
               <div>
                 <h2 className="section-title">
-                  Two focused products, built to feel like real
-                  software.
+                  Two focused products, built to feel like
+                  real software.
                 </h2>
 
                 <p className="section-subtitle">
@@ -460,7 +419,6 @@ function App() {
         </section>
 
         {/* ABOUT */}
-
         <section className="section" id="about">
           <div className="container about-grid">
             <Reveal>
@@ -505,7 +463,6 @@ function App() {
         </section>
 
         {/* SKILLS */}
-
         <section className="section">
           <div className="container">
             <Reveal className="section-header">
@@ -590,11 +547,7 @@ function App() {
         </section>
 
         {/* EXPERIENCE */}
-
-        <section
-          className="section"
-          id="experience"
-        >
+        <section className="section" id="experience">
           <div className="container">
             <Reveal className="section-header">
               <div className="section-label">
@@ -681,7 +634,6 @@ function App() {
         </section>
 
         {/* EDUCATION */}
-
         <section className="section">
           <div className="container">
             <Reveal className="section-header">
@@ -708,7 +660,8 @@ function App() {
                 </h3>
 
                 <p>
-                  Shri Shankracharya Technical Campus, Bhilai
+                  Shri Shankracharya Technical Campus,
+                  Bhilai
                 </p>
               </div>
 
@@ -720,11 +673,7 @@ function App() {
         </section>
 
         {/* CONTACT */}
-
-        <section
-          className="contact"
-          id="contact"
-        >
+        <section className="contact" id="contact">
           <div className="container contact-inner">
             <div className="contact-grid">
               <Reveal>
@@ -779,6 +728,15 @@ function App() {
                   <span>LinkedIn</span>
                   <span>Profile ↗</span>
                 </a>
+
+                <a
+                  href="#"
+                  className="contact-link"
+                  onClick={(event) => event.preventDefault()}
+                >
+                  <span>Resume</span>
+                  <span>View / Download ↗</span>
+                </a>
               </Reveal>
             </div>
           </div>
@@ -800,8 +758,6 @@ function App() {
   );
 }
 
-createRoot(
-  document.getElementById("root")
-).render(
+createRoot(document.getElementById("root")).render(
   <App />
 );
