@@ -1,12 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { ArrowDown, ArrowUpRight, MapPin, Mail } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUpRight,
+  MapPin,
+  Mail,
+  Moon,
+  Sun,
+} from "lucide-react";
+
 import "./styles.css";
 
 import privateChatShot from "./assets/privatechat.png";
 import resumeAiShot from "./assets/resumeai.png";
 import climaViewShot from "./assets/climaview.png";
 import pulseNewsShot from "./assets/pulsenews.png";
+
+/* =========================================================
+   PROJECT DATA
+========================================================= */
 
 const PROJECTS = [
   {
@@ -16,10 +28,13 @@ const PROJECTS = [
     year: "2025",
     role: "Full-stack development",
     image: privateChatShot,
+
     description:
       "Invite-based real-time communication platform built around private connections. Users connect through unique Chat Keys and communicate instantly.",
+
     details:
       "Implemented authentication, REST APIs, MongoDB data management and Socket.io real-time messaging.",
+
     stack: [
       "React",
       "Node.js",
@@ -28,10 +43,13 @@ const PROJECTS = [
       "Socket.io",
       "JWT",
     ],
+
     github: "https://github.com/ameyvs31",
     live: "https://chat-app-ashen-six.vercel.app/",
+
     imagePosition: "center",
   },
+
   {
     number: "02",
     title: "ResumeAI",
@@ -39,10 +57,13 @@ const PROJECTS = [
     year: "2025",
     role: "Product development",
     image: resumeAiShot,
+
     description:
       "AI-assisted resume analysis platform designed to extract information from resumes and evaluate relevance against specific job requirements.",
+
     details:
       "Combines a React frontend, Node.js backend, REST APIs, document processing and MongoDB.",
+
     stack: [
       "React",
       "Node.js",
@@ -50,8 +71,10 @@ const PROJECTS = [
       "MongoDB",
       "AI API",
     ],
+
     github: "https://github.com/ameyvs31",
     live: "https://ai-resume-analyzer-khaki-tau.vercel.app/",
+
     imagePosition: "center",
   },
 ];
@@ -62,39 +85,102 @@ const MINI_PROJECTS = [
     title: "ClimaView",
     type: "Weather dashboard",
     year: "2026",
+    role: "Frontend development",
     image: climaViewShot,
+
     description:
       "Real-time weather dashboard with city search, geolocation, current conditions, hourly trends and multi-day forecasts.",
-    stack: ["React", "Vite", "REST API", "CSS"],
+
+    stack: [
+      "React",
+      "Vite",
+      "REST API",
+      "CSS",
+    ],
+
     github: "https://github.com/ameyvs31/climaview",
     live: "https://climaview-teal.vercel.app/",
   },
+
   {
     number: "04",
     title: "PulseNews",
     type: "News intelligence platform",
     year: "2026",
+    role: "Frontend development",
     image: pulseNewsShot,
+
     description:
       "Editorial-style news platform with category browsing, search, live headlines, responsive cards and a polished reading experience.",
-    stack: ["React", "Vite", "News API", "CSS"],
+
+    stack: [
+      "React",
+      "Vite",
+      "News API",
+      "CSS",
+    ],
+
     github: "https://github.com/ameyvs31/pulsenews",
     live: "https://pulsenews-five.vercel.app/",
   },
 ];
 
-function Reveal({ children, className = "" }) {
-  return <div className={`reveal ${className}`}>{children}</div>;
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+function useDarkMode() {
+  const getInitialTheme = () => {
+    const savedTheme = localStorage.getItem("portfolio-theme");
+
+    if (savedTheme === "dark") return true;
+    if (savedTheme === "light") return false;
+
+    return window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+  };
+
+  const [darkMode, setDarkMode] = useState(getInitialTheme);
+
+  useEffect(() => {
+    const root = document.documentElement;
+
+    if (darkMode) {
+      root.setAttribute("data-theme", "dark");
+      localStorage.setItem("portfolio-theme", "dark");
+    } else {
+      root.setAttribute("data-theme", "light");
+      localStorage.setItem("portfolio-theme", "light");
+    }
+  }, [darkMode]);
+
+  return [darkMode, setDarkMode];
 }
 
-function ProjectCard({ project }) {
-  const disabled = !project.live;
+/* =========================================================
+   REVEAL ANIMATION
+========================================================= */
 
+function Reveal({ children, className = "" }) {
+  return (
+    <div className={`reveal ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+/* =========================================================
+   PROJECT CARD
+========================================================= */
+
+function ProjectCard({ project }) {
   return (
     <article className="project-card">
+
       <a
         className="project-shot"
-        href={disabled ? undefined : project.live}
+        href={project.live}
         target="_blank"
         rel="noreferrer"
         aria-label={`Open ${project.title} live demo`}
@@ -102,7 +188,9 @@ function ProjectCard({ project }) {
         <img
           src={project.image}
           alt={`${project.title} live project screenshot`}
-          style={{ objectPosition: project.imagePosition }}
+          style={{
+            objectPosition: project.imagePosition || "center",
+          }}
         />
 
         <div className="shot-overlay" />
@@ -121,7 +209,9 @@ function ProjectCard({ project }) {
       </a>
 
       <div className="project-info">
+
         <div>
+
           <div className="project-meta">
             <span>{project.type}</span>
             <span>{project.year}</span>
@@ -137,56 +227,67 @@ function ProjectCard({ project }) {
 
           <div className="stack-list">
             {project.stack.map((item) => (
-              <span key={item}>{item}</span>
+              <span key={item}>
+                {item}
+              </span>
             ))}
           </div>
+
         </div>
 
         <div className="project-footer">
-          <span>{project.role}</span>
+
+          <span>
+            {project.role}
+          </span>
 
           <div className="project-links">
+
             <a
               href={project.github}
               target="_blank"
               rel="noreferrer"
             >
-              GitHub <ArrowUpRight size={13} />
+              GitHub
+              <ArrowUpRight size={13} />
             </a>
 
-            {!disabled ? (
-              <a
-                href={project.live}
-                target="_blank"
-                rel="noreferrer"
-                className="live-link"
-              >
-                Live Demo <ArrowUpRight size={13} />
-              </a>
-            ) : (
-              <span className="pending-link">
-                Live URL <span>add link</span>
-              </span>
-            )}
+            <a
+              href={project.live}
+              target="_blank"
+              rel="noreferrer"
+              className="live-link"
+            >
+              Live Demo
+              <ArrowUpRight size={13} />
+            </a>
+
           </div>
+
         </div>
+
       </div>
+
     </article>
   );
 }
 
-function MiniProject({ project }) {
-  const disabled = !project.live;
+/* =========================================================
+   MINI PROJECT
+========================================================= */
 
+function MiniProject({ project }) {
   return (
     <article className="mini-card">
+
       <a
         className="mini-shot"
-        href={disabled ? undefined : project.live}
+        href={project.live}
         target="_blank"
         rel="noreferrer"
         aria-label={`Open ${project.title} live demo`}
       >
+
         <img
           src={project.image}
           alt={`${project.title} screenshot`}
@@ -199,12 +300,14 @@ function MiniProject({ project }) {
         </span>
 
         <span className="mini-view">
-          {disabled ? "Live URL needed" : "View live"}
+          View live
           <ArrowUpRight size={15} />
         </span>
+
       </a>
 
       <div className="mini-body">
+
         <div className="project-meta">
           <span>{project.type}</span>
           <span>{project.year}</span>
@@ -216,11 +319,14 @@ function MiniProject({ project }) {
 
         <div className="stack-list">
           {project.stack.map((item) => (
-            <span key={item}>{item}</span>
+            <span key={item}>
+              {item}
+            </span>
           ))}
         </div>
 
         <div className="mini-links">
+
           <a
             href={project.github}
             target="_blank"
@@ -229,23 +335,31 @@ function MiniProject({ project }) {
             GitHub ↗
           </a>
 
-          {!disabled && (
-            <a
-              href={project.live}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Live Demo ↗
-            </a>
-          )}
+          <a
+            href={project.live}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Live Demo ↗
+          </a>
+
         </div>
+
       </div>
+
     </article>
   );
 }
 
+/* =========================================================
+   APP
+========================================================= */
+
 function App() {
-  React.useEffect(() => {
+  const [darkMode, setDarkMode] = useDarkMode();
+
+  /* Scroll reveal */
+  useEffect(() => {
     const items = document.querySelectorAll(".reveal");
 
     const observer = new IntersectionObserver(
@@ -262,55 +376,126 @@ function App() {
       }
     );
 
-    items.forEach((item) => observer.observe(item));
+    items.forEach((item) => {
+      observer.observe(item);
+    });
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   return (
     <>
+      {/* =================================================
+          HEADER
+      ================================================= */}
+
       <header className="site-header">
+
         <div className="container nav">
-          <a href="#top" className="brand">
-            <span className="brand-mark">AS</span>
-            <span>Amey Shrivastav</span>
+
+          <a
+            href="#top"
+            className="brand"
+          >
+            <span className="brand-mark">
+              AS
+            </span>
+
+            <span>
+              Amey Shrivastav
+            </span>
           </a>
 
           <nav className="nav-links">
-            <a href="#work">Work</a>
-            <a href="#experience">Experience</a>
-            <a href="#about">About</a>
 
-            <a href="#contact" className="nav-cta">
+            <a href="#work">
+              Work
+            </a>
+
+            <a href="#experience">
+              Experience
+            </a>
+
+            <a href="#about">
+              About
+            </a>
+
+            <a
+              href="#contact"
+              className="nav-cta"
+            >
               Contact
             </a>
+
+            {/* DARK MODE BUTTON */}
+
+            <button
+              type="button"
+              className="theme-toggle"
+              onClick={() => setDarkMode((value) => !value)}
+              aria-label={
+                darkMode
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+              }
+              title={
+                darkMode
+                  ? "Light mode"
+                  : "Dark mode"
+              }
+            >
+              {darkMode ? (
+                <Sun size={16} />
+              ) : (
+                <Moon size={16} />
+              )}
+            </button>
+
           </nav>
+
         </div>
+
       </header>
 
+      {/* =================================================
+          MAIN
+      ================================================= */}
+
       <main id="top">
+
         {/* HERO */}
+
         <section className="hero">
+
           <div className="container hero-grid">
+
             <Reveal>
+
               <div className="eyebrow">
+
                 <span className="eyebrow-dot" />
+
                 Available for software opportunities
+
               </div>
 
               <h1>
                 Software developer building{" "}
-                <span>useful</span> digital products.
+                <span>useful</span>{" "}
+                digital products.
               </h1>
 
               <p className="hero-description">
-                I'm Amey Vikram Shrivastav, a Computer Science
-                graduate focused on full-stack web development,
-                frontend engineering, backend systems and
-                real-time applications.
+                I'm Amey Vikram Shrivastav, a Computer
+                Science graduate focused on full-stack web
+                development, frontend engineering, backend
+                systems and real-time applications.
               </p>
 
               <div className="hero-actions">
+
                 <a
                   href="#work"
                   className="button button-primary"
@@ -328,11 +513,15 @@ function App() {
                   GitHub
                   <ArrowUpRight size={14} />
                 </a>
+
               </div>
+
             </Reveal>
 
             <Reveal className="hero-side">
+
               <aside className="hero-side-card">
+
                 <div className="side-label">
                   Currently focused on
                 </div>
@@ -348,80 +537,122 @@ function App() {
                   <MapPin size={13} />
                   India
                 </div>
+
               </aside>
+
             </Reveal>
+
           </div>
+
         </section>
 
-        {/* PROJECTS */}
-        <section className="section" id="work">
+        {/* =================================================
+            SELECTED WORK
+        ================================================= */}
+
+        <section
+          className="section"
+          id="work"
+        >
+
           <div className="container">
+
             <Reveal className="section-header">
+
               <div className="section-label">
                 01 — Selected work
               </div>
 
               <div>
+
                 <h2 className="section-title">
-                  Projects that demonstrate how I think and
-                  build.
+                  Projects that demonstrate how I think
+                  and build.
                 </h2>
 
                 <p className="section-subtitle">
                   Four applications covering frontend
-                  engineering, APIs, authentication, databases,
-                  real-time communication and live data
-                  integrations.
+                  engineering, APIs, authentication,
+                  databases, real-time communication and
+                  live data integrations.
                 </p>
+
               </div>
+
             </Reveal>
 
             <div className="projects">
+
               {PROJECTS.map((project) => (
                 <Reveal key={project.number}>
                   <ProjectCard project={project} />
                 </Reveal>
               ))}
+
             </div>
+
           </div>
+
         </section>
 
-        {/* MINI PROJECTS */}
+        {/* =================================================
+            MINI PROJECTS
+        ================================================= */}
+
         <section className="section split-project-section">
+
           <div className="container">
+
             <Reveal className="section-header">
+
               <div className="section-label">
                 02 — Live web apps
               </div>
 
               <div>
+
                 <h2 className="section-title">
-                  Two focused products, built to feel like
-                  real software.
+                  Two focused products, built to feel
+                  like real software.
                 </h2>
 
                 <p className="section-subtitle">
-                  ClimaView and PulseNews get their own visual
-                  treatment so the actual interfaces are
-                  immediately visible to recruiters.
+                  ClimaView and PulseNews get their own
+                  visual treatment so the actual interfaces
+                  are immediately visible to recruiters.
                 </p>
+
               </div>
+
             </Reveal>
 
             <div className="mini-grid">
+
               {MINI_PROJECTS.map((project) => (
                 <Reveal key={project.number}>
                   <MiniProject project={project} />
                 </Reveal>
               ))}
+
             </div>
+
           </div>
+
         </section>
 
-        {/* ABOUT */}
-        <section className="section" id="about">
+        {/* =================================================
+            ABOUT
+        ================================================= */}
+
+        <section
+          className="section"
+          id="about"
+        >
+
           <div className="container about-grid">
+
             <Reveal>
+
               <div className="section-label">
                 03 — About
               </div>
@@ -430,54 +661,70 @@ function App() {
                 Building a strong foundation in{" "}
                 <span>software.</span>
               </h2>
+
             </Reveal>
 
             <Reveal className="about-copy">
+
               <p>
                 I'm a Computer Science & Business Systems
-                graduate with hands-on experience building web
-                applications across the frontend and backend.
+                graduate with hands-on experience building
+                web applications across the frontend and
+                backend.
               </p>
 
               <p>
                 My primary development stack is React,
-                Node.js, Express and MongoDB. I've also worked
-                with REST APIs, JWT authentication, Socket.io
-                and third-party API integrations.
+                Node.js, Express and MongoDB. I've also
+                worked with REST APIs, JWT authentication,
+                Socket.io and third-party API integrations.
               </p>
 
               <p>
-                I enjoy understanding how systems work behind
-                the interface — from authentication and API
-                design to database operations and real-time
-                communication.
+                I enjoy understanding how systems work
+                behind the interface — from authentication
+                and API design to database operations and
+                real-time communication.
               </p>
 
               <div className="about-highlight">
-                Currently working as a Frontend Engineer at
-                Titli Foundation while continuing to build and
-                improve full-stack applications.
+                Currently working as a Frontend Engineer
+                at Titli Foundation while continuing to
+                build and improve full-stack applications.
               </div>
+
             </Reveal>
+
           </div>
+
         </section>
 
-        {/* SKILLS */}
+        {/* =================================================
+            SKILLS
+        ================================================= */}
+
         <section className="section">
+
           <div className="container">
+
             <Reveal className="section-header">
+
               <div className="section-label">
                 04 — Technical skills
               </div>
 
               <div>
+
                 <h2 className="section-title">
                   Tools I use to turn ideas into software.
                 </h2>
+
               </div>
+
             </Reveal>
 
             <div className="skills-grid">
+
               {[
                 [
                   "Languages",
@@ -490,6 +737,7 @@ function App() {
                     "CSS",
                   ],
                 ],
+
                 [
                   "Frontend",
                   [
@@ -500,6 +748,7 @@ function App() {
                     "Responsive UI",
                   ],
                 ],
+
                 [
                   "Backend & Data",
                   [
@@ -512,6 +761,7 @@ function App() {
                     "Socket.io",
                   ],
                 ],
+
                 [
                   "Tools & Platforms",
                   [
@@ -524,13 +774,18 @@ function App() {
                   ],
                 ],
               ].map(([name, skills]) => (
+
                 <Reveal
                   className="skill-group"
                   key={name}
                 >
-                  <h3>{name}</h3>
+
+                  <h3>
+                    {name}
+                  </h3>
 
                   <div className="skill-items">
+
                     {skills.map((skill) => (
                       <span
                         className="skill"
@@ -539,22 +794,38 @@ function App() {
                         {skill}
                       </span>
                     ))}
+
                   </div>
+
                 </Reveal>
+
               ))}
+
             </div>
+
           </div>
+
         </section>
 
-        {/* EXPERIENCE */}
-        <section className="section" id="experience">
+        {/* =================================================
+            EXPERIENCE
+        ================================================= */}
+
+        <section
+          className="section"
+          id="experience"
+        >
+
           <div className="container">
+
             <Reveal className="section-header">
+
               <div className="section-label">
                 05 — Experience
               </div>
 
               <div>
+
                 <h2 className="section-title">
                   Professional experience.
                 </h2>
@@ -564,10 +835,13 @@ function App() {
                   software development and professional
                   technical operations.
                 </p>
+
               </div>
+
             </Reveal>
 
             <div className="experience">
+
               {[
                 [
                   "AUG 2026 — PRESENT",
@@ -576,6 +850,7 @@ function App() {
                   "Working on responsive web interfaces and frontend features using modern frontend technologies.",
                   "Remote",
                 ],
+
                 [
                   "AUG 2025 — PRESENT",
                   "Computer Operator",
@@ -583,6 +858,7 @@ function App() {
                   "Responsible for digital documentation, data entry, records and day-to-day computer operations.",
                   "Rajnandgaon",
                 ],
+
                 [
                   "JUL 2024 — AUG 2024",
                   "Frontend Developer Intern",
@@ -590,6 +866,7 @@ function App() {
                   "Contributed to practical web application interfaces, responsive layouts and reusable component development.",
                   "Remote",
                 ],
+
                 [
                   "MAY 2024 — JUN 2024",
                   "Frontend Developer Intern",
@@ -598,85 +875,117 @@ function App() {
                   "Remote",
                 ],
               ].map(
-                ([
-                  date,
-                  role,
-                  company,
-                  description,
-                  location,
-                ]) => (
+                ([date, role, company, desc, location]) => (
+
                   <Reveal
                     className="experience-row"
                     key={`${company}-${date}`}
                   >
+
                     <div className="experience-date">
                       {date}
                     </div>
 
                     <div>
-                      <h3>{role}</h3>
+
+                      <h3>
+                        {role}
+                      </h3>
 
                       <div className="experience-company">
                         {company}
                       </div>
 
-                      <p>{description}</p>
+                      <p>
+                        {desc}
+                      </p>
+
                     </div>
 
                     <div className="experience-location">
                       {location}
                     </div>
+
                   </Reveal>
+
                 )
               )}
+
             </div>
+
           </div>
+
         </section>
 
-        {/* EDUCATION */}
+        {/* =================================================
+            EDUCATION
+        ================================================= */}
+
         <section className="section">
+
           <div className="container">
+
             <Reveal className="section-header">
+
               <div className="section-label">
                 06 — Education
               </div>
 
               <div>
+
                 <h2 className="section-title">
                   Academic background.
                 </h2>
+
               </div>
+
             </Reveal>
 
             <Reveal className="education-card">
+
               <div className="education-year">
                 2021 — 2025
               </div>
 
               <div>
+
                 <h3>
-                  B.Tech — Computer Science & Business
-                  Systems
+                  B.Tech — Computer Science &
+                  Business Systems
                 </h3>
 
                 <p>
                   Shri Shankracharya Technical Campus,
                   Bhilai
                 </p>
+
               </div>
 
               <div className="education-score">
                 8.0 / 10 CGPA
               </div>
+
             </Reveal>
+
           </div>
+
         </section>
 
-        {/* CONTACT */}
-        <section className="contact" id="contact">
+        {/* =================================================
+            CONTACT
+        ================================================= */}
+
+        <section
+          className="contact"
+          id="contact"
+        >
+
           <div className="container contact-inner">
+
             <div className="contact-grid">
+
               <Reveal>
+
                 <div className="contact-label">
                   07 — Contact
                 </div>
@@ -692,13 +1001,18 @@ function App() {
                   freelance work and interesting technical
                   projects.
                 </p>
+
               </Reveal>
 
               <Reveal className="contact-links">
+
+                {/* EMAIL */}
+
                 <a
                   href="mailto:ameyvs31@gmail.com"
                   className="contact-link"
                 >
+
                   <span>
                     <Mail size={15} />
                     Email
@@ -707,7 +1021,10 @@ function App() {
                   <span>
                     ameyvs31@gmail.com
                   </span>
+
                 </a>
+
+                {/* GITHUB */}
 
                 <a
                   href="https://github.com/ameyvs31"
@@ -715,9 +1032,18 @@ function App() {
                   rel="noreferrer"
                   className="contact-link"
                 >
-                  <span>GitHub</span>
-                  <span>@ameyvs31 ↗</span>
+
+                  <span>
+                    GitHub
+                  </span>
+
+                  <span>
+                    @ameyvs31 ↗
+                  </span>
+
                 </a>
+
+                {/* LINKEDIN */}
 
                 <a
                   href="https://www.linkedin.com/in/amey-shrivastav-b23203210/"
@@ -725,39 +1051,81 @@ function App() {
                   rel="noreferrer"
                   className="contact-link"
                 >
-                  <span>LinkedIn</span>
-                  <span>Profile ↗</span>
+
+                  <span>
+                    LinkedIn
+                  </span>
+
+                  <span>
+                    Profile ↗
+                  </span>
+
                 </a>
+
+                {/* PRIVATECHAT */}
 
                 <a
-                  href="#"
+                  href="https://chat-app-ashen-six.vercel.app/"
+                  target="_blank"
+                  rel="noreferrer"
                   className="contact-link"
-                  onClick={(event) => event.preventDefault()}
                 >
-                  <span>Resume</span>
-                  <span>View / Download ↗</span>
+
+                  <span>
+                    PrivateChat
+                  </span>
+
+                  <span>
+                    Live Demo ↗
+                  </span>
+
                 </a>
+
               </Reveal>
+
             </div>
+
           </div>
+
         </section>
+
       </main>
 
+      {/* =================================================
+          FOOTER
+      ================================================= */}
+
       <footer>
+
         <div className="container footer">
+
           <span>
             © 2026 Amey Vikram Shrivastav
           </span>
 
-          <span>Software Developer</span>
+          <span>
+            Software Developer
+          </span>
 
-          <span>India</span>
+          <span>
+            India
+          </span>
+
         </div>
+
       </footer>
     </>
   );
 }
 
-createRoot(document.getElementById("root")).render(
-  <App />
+/* =========================================================
+   RENDER
+========================================================= */
+
+createRoot(
+  document.getElementById("root")
+).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 );
